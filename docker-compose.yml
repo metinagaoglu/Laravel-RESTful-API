@@ -1,0 +1,26 @@
+version: '3'
+services:
+  postgres:
+    image: postgres
+    tty: true
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=myapp
+    ports:
+      - '5432:5432'
+  backend:
+    tty: true
+    image: laravelsail/php80-composer
+    #command: php artisan serve
+    environment:
+      - DB_HOST=postgres
+      - DB_USERNAME=postgres
+      - DB_DATABASE=myapp
+      - DB_PASSWORD=postgres
+    depends_on:
+      - postgres
+    ports:
+      - '8000:8000'
+    volumes:
+      - './src/:/app/'

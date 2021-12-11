@@ -24,3 +24,7 @@ Route::group(['middleware' => 'api','prefix' => 'auth'], function ($router) {
     Route::get('/user-profile', 'App\Http\Controllers\AuthController@userProfile');
 
 });
+
+Route::group(['middleware' => 'jwt.auth'], function ($router) {
+    Route::apiResource('appointments', \App\Http\Controllers\AppointmentController::class);
+});

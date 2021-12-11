@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Repository\Eloquent\AppointmentRepository;
+use App\Repository\Eloquent\ContactRepository;
 use Illuminate\Http\Request;
 
 
@@ -11,9 +12,10 @@ class AppointmentController extends Controller
 
     private $appointmentRepository;
 
-    public function __construct(AppointmentRepository $appointmentRepository)
+    public function __construct(AppointmentRepository $appointmentRepository,ContactRepository $contactRepository)
     {
         $this->appointmentRepository = $appointmentRepository;
+        $this->contactRepository = $contactRepository;
     }
 
     /**
@@ -36,23 +38,34 @@ class AppointmentController extends Controller
     {
         //TODO: validation
 
-        //TODO updateOrCreate contact
+        $contact = $this->contactRepository->updateOrCreate(
+            [
+                'phonenumber' => $request->get('contact_phonenumber')
+            ],
+            [
+                'name' => $request->get('contact_name'),
+                'email' => $request->get('contact_email'),
+                'surname' => $request->get('contact_surname'),
+                'phonenumber' => $request->get('contact_phonenumber'),
+            ]
+        );
 
         //Store appointment
-        $this->appointmentRepository->create([
+        $appointment = $this->appointmentRepository->create([
            'user_id' => auth()->user()->id,
-           'contact_id' => 1, //TODO: get contactid
+           'contact_id' => $contact->contact_id,
            'appointment_address' => $request->get('appointment_address'),
            'appointment_date' => $request->get('appointment_date'),
            'post_code' => $request->get('post_code'),
-           'distance' => 3,
-           'estimated_time_out_of_office' => 'NOW()',
-           'available_time_at_the_office' => 'NOW()',
+           'distance' => 3, //TODO: calculate
+           'estimated_time_out_of_office' => 'NOW()', //TODO: calculate
+           'available_time_at_the_office' => 'NOW()', //TODO: calculate
         ]);
 
 
         return response()->json([
-            'status' => true
+            'status' => true,
+            'data' => $appointment
         ])->setStatusCode(201);
 
     }

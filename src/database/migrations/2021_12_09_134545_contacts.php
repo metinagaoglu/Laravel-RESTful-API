@@ -21,7 +21,7 @@ class Contacts extends Migration
             $table->string('surname');
             $table->timestamps();
 
-            $table->unique('email');
+            $table->unique('phonenumber');
         });
     }
 

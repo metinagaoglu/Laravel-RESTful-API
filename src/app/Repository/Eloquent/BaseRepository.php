@@ -41,8 +41,13 @@ class BaseRepository implements EloquentRepositoryInterface
         return $this->model->find($id);
     }
 
-    public function updateOrCreate()
+    /**
+     * @param array $attributes
+     * @param array $values
+     * @return mixed
+     */
+    public function updateOrCreate(array $attributes,array $values)
     {
-        return $this->model->updateOrCreate($array1, $array2);
+        return $this->model->updateOrCreate($attributes, $values);
     }
 }

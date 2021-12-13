@@ -6,6 +6,7 @@ use App\Repository\Eloquent\AppointmentRepository;
 use App\Repository\Eloquent\ContactRepository;
 use Illuminate\Http\Request;
 
+use Postcode;
 
 class AppointmentController extends Controller
 {
@@ -37,6 +38,7 @@ class AppointmentController extends Controller
     public function store(Request $request)
     {
         //TODO: validation
+        //$valid = Postcode::validate($request->get('post_code'));
 
         $contact = $this->contactRepository->updateOrCreate(
             [
@@ -50,6 +52,16 @@ class AppointmentController extends Controller
             ]
         );
 
+
+/*      TODO: distance calculate using google maps api
+        $appointment = Postcode::getPostcode($request->get('post_code'));
+        $real_estate = Postcode::getPostcode(getenv('REAL_ESTATE_AGENT_POSTCODE'));
+        var_dump($real_estate->longitude);
+        var_dump($real_estate->latitude);
+        var_dump($appointment->latitude);
+        var_dump($appointment->latitude);
+        exit;
+*/
         //Store appointment
         $appointment = $this->appointmentRepository->create([
            'user_id' => auth()->user()->id,

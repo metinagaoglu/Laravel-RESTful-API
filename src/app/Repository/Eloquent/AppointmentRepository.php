@@ -26,4 +26,19 @@ class AppointmentRepository extends BaseRepository implements AppointmentReposit
     {
         return $this->model->all();
     }
+
+    /**
+     * @param string|null $date
+     * @param int $pagelimit
+     * @return mixed
+     */
+    public function filterAndPaginate(?string $date,int $pagelimit)
+    {
+        $appointments = $this->model;
+        if ($date) {
+            $appointments=$this->model->where('appointment_date','>',$date);
+        }
+        $appointments = $appointments->paginate($pagelimit);
+        return $appointments;
+    }
 }

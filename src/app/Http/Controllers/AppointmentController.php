@@ -22,11 +22,19 @@ class AppointmentController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Response|object
      */
-    public function index()
+    public function index(Request $request)
     {
 
+        //TODO: validation
+
+        $appointments = $this->appointmentRepository->filterAndPaginate($request->get('date'),10);
+
+        return response()->json([
+            'status' => true,
+            'data' => $appointments
+        ])->setStatusCode(200);
     }
 
     /**

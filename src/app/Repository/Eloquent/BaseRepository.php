@@ -50,4 +50,8 @@ class BaseRepository implements EloquentRepositoryInterface
     {
         return $this->model->updateOrCreate($attributes, $values);
     }
+
+    public function paginate(int $pagelimit) {
+        return $this->model->paginate($pagelimit);
+    }
 }

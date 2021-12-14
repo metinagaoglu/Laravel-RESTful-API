@@ -41,4 +41,15 @@ class AppointmentRepository extends BaseRepository implements AppointmentReposit
         $appointments = $appointments->paginate($pagelimit);
         return $appointments;
     }
+
+    public function update(array $attributes,$id) {
+        return $this->model->where('appointment_id',$id)->update($attributes);
+    }
+
+    public function destroy(int $id) {
+        if (!is_int($id)) {
+            return null;
+        }
+        return $this->model->find($id)->delete();
+    }
 }

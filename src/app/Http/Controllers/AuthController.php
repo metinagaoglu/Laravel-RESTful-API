@@ -3,10 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use Validator;
+use MarcinOrlowski\ResponseBuilder\ResponseBuilder as RB;
 
 
 class AuthController extends Controller
@@ -24,7 +24,7 @@ class AuthController extends Controller
     /**
      * Get a JWT via given credentials.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return \Illuminate\Http\JsonResponse|object|\Symfony\Component\HttpFoundation\Response
      */
     public function login(Request $request){
     	$validator = Validator::make($request->all(), [
@@ -33,11 +33,12 @@ class AuthController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
+            return RB::error(422,[],$validator->errors())->setStatusCode(422);
+
         }
 
         if (! $token = auth()->attempt($validator->validated())) {
-            return response()->json(['error' => 'Unauthorized'], 401);
+            return RB::error(401,[],['error' => 'Unauthorized'])->setStatusCode(401);
         }
 
         return $this->createNewToken($token);
@@ -46,7 +47,7 @@ class AuthController extends Controller
     /**
      * Register a User.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return \Illuminate\Http\JsonResponse|object|\Symfony\Component\HttpFoundation\Response
      */
     public function register(Request $request) {
         $validator = Validator::make($request->all(), [
@@ -56,21 +57,15 @@ class AuthController extends Controller
         ]);
 
         if($validator->fails()){
-            return response()->json($validator->errors()->toJson(), 400);
+            return RB::error(400,[],$validator->errors())->setStatusCode(400);
         }
 
         $user = User::create(array_merge(
             $validator->validated(),
             ['password' => bcrypt($request->password)]
         ));
-        
-        /**
-         * TODO: Response builder trait
-         */
-        return response()->json([
-            'message' => 'User successfully registered',
-            'user' => $user
-        ], 201);
+
+        return RB::success($user)->setStatusCode(201);
     }
 
 
@@ -82,7 +77,8 @@ class AuthController extends Controller
     public function logout() {
         auth()->logout();
 
-        return response()->json(['message' => 'User successfully signed out']);
+
+        return RB::success();
     }
 
     /**
@@ -100,7 +96,7 @@ class AuthController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function userProfile() {
-        return response()->json(auth()->user());
+        return RB::success(auth()->user());
     }
 
     /**
@@ -111,7 +107,8 @@ class AuthController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     protected function createNewToken($token){
-        return response()->json([
+
+        return RB::success([
             'access_token' => $token,
             'token_type' => 'bearer',
             'expires_in' => auth()->factory()->getTTL() * 60,

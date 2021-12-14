@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Repository\Eloquent\AppointmentRepository;
 use App\Repository\Eloquent\ContactRepository;
 use Illuminate\Http\Request;
-
+use MarcinOrlowski\ResponseBuilder\ResponseBuilder as RB;
 use Postcode;
 
 class AppointmentController extends Controller
@@ -31,10 +31,7 @@ class AppointmentController extends Controller
 
         $appointments = $this->appointmentRepository->filterAndPaginate($request->get('date'),10);
 
-        return response()->json([
-            'status' => true,
-            'data' => $appointments
-        ])->setStatusCode(200);
+        return RB::success($appointments);
     }
 
     /**
@@ -83,11 +80,8 @@ class AppointmentController extends Controller
         ]);
 
 
-        return response()->json([
-            'status' => true,
-            'data' => $appointment
-        ])->setStatusCode(201);
 
+        return RB::success($appointment)->setStatusCode(201);
     }
 
     /**

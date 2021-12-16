@@ -46,10 +46,15 @@ class AppointmentRepository extends BaseRepository implements AppointmentReposit
         return $this->model->where('appointment_id',$id)->update($attributes);
     }
 
-    public function destroy(int $id) {
+    public function destroy(int $id): bool
+    {
         if (!is_int($id)) {
-            return null;
+            return false;
         }
-        return $this->model->find($id)->delete();
+        $appointment = $this->model->find($id);
+        if (!$appointment) {
+            return false;
+        }
+        return $appointment->delete();
     }
 }

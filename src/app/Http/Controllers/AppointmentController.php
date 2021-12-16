@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\AppointmentRequest;
 use App\Repository\Eloquent\AppointmentRepository;
 use App\Repository\Eloquent\ContactRepository;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use MarcinOrlowski\ResponseBuilder\ResponseBuilder as RB;
 use Postcode;
@@ -23,12 +25,19 @@ class AppointmentController extends Controller
     /**
      * Display a listing of the resource.
      *
+     * @param Request $request
      * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Response|object
      */
     public function index(Request $request)
     {
+        $validator = Validator::make($request->all(),[
+            'page' => ['integer'],
+            'date' => ['date_format:Y-m-d'],
+        ]);
 
-        //TODO: validation
+        if ($validator->fails()) {
+            return RB::error(400,[],$validator->errors(),400);
+        }
 
         $appointments = $this->appointmentRepository->filterAndPaginate($request->get('date'), 10);
 
@@ -41,10 +50,8 @@ class AppointmentController extends Controller
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Response|object
      */
-    public function store(Request $request)
+    public function store(AppointmentRequest $request)
     {
-        //TODO: validation
-        //$valid = Postcode::validate($request->get('post_code'));
 
         $contact = $contact = $this->updateOrCreateContact($request);
 
@@ -123,7 +130,6 @@ class AppointmentController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //TODO: validation
         $contact = $this->updateOrCreateContact($request);
 
         $updateAttributes = $request->only('appointment_address', 'appointment_date', 'post_code');
@@ -142,7 +148,17 @@ class AppointmentController extends Controller
      */
     public function destroy($id)
     {
-        $this->appointmentRepository->destroy($id);
+        $validator = Validator::make(['id'=>$id],[
+            'id' => ['integer'],
+        ]);
+
+        if ($validator->fails()) {
+            return RB::error(400,[],$validator->errors(),400);
+        }
+
+        if( !$this->appointmentRepository->destroy($id)) {
+            return RB::error(204,[],'')->setStatusCode(204);
+        }
         return RB::success()->setStatusCode(202);
     }
 

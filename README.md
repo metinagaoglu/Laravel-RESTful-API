@@ -4,10 +4,9 @@
 <h3 align="center">Laravel API example</h3>
 
   <p align="center">
-    An awesome README template to jumpstart your projects!
+    A simple restful api for realtors that creates appointments and calculates distances based on location
     <br />
     <br />
-    <a href="https://github.com/othneildrew/Best-README-Template">View Demo</a>
   </p>
 </div>
 
@@ -44,7 +43,6 @@
 
 
 
-
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 
@@ -55,8 +53,8 @@ This section should list any major frameworks/libraries used to bootstrap your p
 
 
 * [Laravel](https://laravel.com)
-* [PostgreSQL](https://laravel.com)
-* [Docker](https://laravel.com)
+* [PostgreSQL](https://www.postgresql.org/)
+* [Docker](https://www.docker.com/)
 
 
 <p align="right">(<a href="#top">back to top</a>)</p>
@@ -79,7 +77,7 @@ This is an example of how to list things you need to use the software and how to
 
 ### Installation
 
-_Below is an example of how you can instruct your audience on installing and setting up your app. This template doesn't rely on any external dependencies or services._
+_Below is an example of how you can instruct your audience on installing and setting up your app.
 
 
 1. Clone the repo

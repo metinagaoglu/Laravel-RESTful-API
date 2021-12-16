@@ -21,8 +21,12 @@ class Appointment extends Model
         'contact_id',
         'appointment_address',
         'post_code',
+        'latitude',
+        'longitude',
+        'origin_addresses',
         'appointment_date',
         'distance',
+        'duration',
         'estimated_time_out_of_office',
         'available_time_at_the_office',
     ];

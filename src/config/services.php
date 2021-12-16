@@ -34,4 +34,8 @@ return [
         'url' => env('POSTCODES_URL', 'https://api.postcodes.io/')
     ],
 
+    'googleapis' => [
+        'distance' => env('GOOGLE_MAPS_API')
+    ],
+
 ];

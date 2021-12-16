@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Repository\Eloquent\AppointmentRepository;
 use App\Repository\Eloquent\ContactRepository;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use MarcinOrlowski\ResponseBuilder\ResponseBuilder as RB;
 use Postcode;
@@ -47,15 +48,41 @@ class AppointmentController extends Controller
 
         $contact = $contact = $this->updateOrCreateContact($request);
 
-        /*      TODO: distance calculate using google maps api
-                $appointment = Postcode::getPostcode($request->get('post_code'));
-                $real_estate = Postcode::getPostcode(getenv('REAL_ESTATE_AGENT_POSTCODE'));
-                var_dump($real_estate->longitude);
-                var_dump($real_estate->latitude);
-                var_dump($appointment->latitude);
-                var_dump($appointment->latitude);
-                exit;
-        */
+        $appointment = Postcode::getPostcode($request->get('post_code'));
+        $real_estate = Postcode::getPostcode(getenv('REAL_ESTATE_AGENT_POSTCODE'));
+
+        /**
+         * TODO: Make a service for this
+         * Google maps api
+         */
+        $google_maps_api_token = config('services.googleapis.distance');
+        $maps = "https://maps.googleapis.com/maps/api/distancematrix/json"
+        ."?destinations={$appointment->latitude}%20{$appointment->longitude}"
+        ."&origins={$real_estate->latitude}%20{$real_estate->longitude}"
+        ."&key={$google_maps_api_token}&mode=driving";
+        $mapsCache = file_get_contents($maps);
+
+       $distanceApiResponse = json_decode($mapsCache);
+       if(json_last_error() !== 0) {
+            return RB::error(110,[],'Google maps api error')->setStatusCode(500);
+       }
+
+       if($distanceApiResponse->status !== "OK") {
+           return RB::error(111,[],'Google maps api error')->setStatusCode(500);
+       }
+
+        /**
+         * Date calculate
+         */
+        $distanceSecond = $distanceApiResponse->rows[0]->elements[0]->duration->value;
+
+        $appointment_date = new Carbon($request->get('appointment_date'));
+
+        $estimated_time_out_of_office = $appointment_date->subSecond($distanceSecond);
+
+        $appointment_date = new Carbon($request->get('appointment_date'));
+        $available_time_at_the_office = $appointment_date->addSecond( $distanceSecond + 3600 );
+
         //Store appointment
         $appointment = $this->appointmentRepository->create([
             'user_id' => auth()->user()->id,
@@ -63,9 +90,13 @@ class AppointmentController extends Controller
             'appointment_address' => $request->get('appointment_address'),
             'appointment_date' => $request->get('appointment_date'),
             'post_code' => $request->get('post_code'),
-            'distance' => 3, //TODO: calculate
-            'estimated_time_out_of_office' => 'NOW()', //TODO: calculate
-            'available_time_at_the_office' => 'NOW()', //TODO: calculate
+            'latitude' => $appointment->latitude,
+            'longitude' => $appointment->longitude,
+            'origin_addresses' => $distanceApiResponse->origin_addresses[0],
+            'distance' => $distanceApiResponse->rows[0]->elements[0]->distance->value,
+            'duration' => $distanceApiResponse->rows[0]->elements[0]->duration->value,
+            'estimated_time_out_of_office' => $estimated_time_out_of_office->toDateTimeString(),
+            'available_time_at_the_office' => $available_time_at_the_office->toDateTimeString(),
         ]);
 
 

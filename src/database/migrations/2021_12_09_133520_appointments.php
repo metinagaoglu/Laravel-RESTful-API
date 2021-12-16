@@ -20,8 +20,13 @@ class Appointments extends Migration
             $table->string('appointment_address');
             $table->string('post_code');
 
+            $table->float('latitude')->nullable();
+            $table->float('longitude')->nullable();
+            $table->string('origin_addresses')->nullable();
+
             $table->dateTime('appointment_date');
             $table->integer('distance');
+            $table->integer('duration');
             $table->timestamp('estimated_time_out_of_office');
             $table->timestamp('available_time_at_the_office');
             $table->timestamps();

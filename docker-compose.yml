@@ -12,7 +12,7 @@ services:
   backend:
     tty: true
     image: metinagaoglu/php8_laravel:1.0
-    command: "php app/artisan serve --host=0.0.0.0"
+    #command: "php app/artisan serve --host=0.0.0.0"
     environment:
       - DB_HOST=postgres
       - DB_USERNAME=postgres

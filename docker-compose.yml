@@ -11,8 +11,8 @@ services:
       - '5432:5432'
   backend:
     tty: true
-    image: laravelsail/php80-composer
-    #command: php artisan serve
+    image: metinagaoglu/php8_laravel:1.0
+    command: "php app/artisan serve --host=0.0.0.0"
     environment:
       - DB_HOST=postgres
       - DB_USERNAME=postgres

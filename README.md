@@ -71,27 +71,60 @@ To get a local copy up and running follow these simple example steps.
 
 This is an example of how to list things you need to use the software and how to install them.
 * PHP8
-* PostgesQL
-* Docker
+* Composer
+* PostgesQL(Recommended) or MariaDB
+* Docker(Optional)
 
 
-### Installation
+### Manual Installation
 
-_Below is an example of how you can instruct your audience on installing and setting up your app.
 
 
 1. Clone the repo
    ```sh
    git clone https://github.com/metinagaoglu/Laravel-API-example
    ```
-2. Run docker containers
+2. Move source directory
    ```sh
-   docker-compose up
+   cd src/
+   ```
+2. Copy the .env file.
+   ```sh
+   cp .env.example .env
+   ```
+3. Configure your database,google maps api keys etc. settings
+```shell
+POSTCODES_URL=https://api.postcodes.io/
+REAL_ESTATE_AGENT_POSTCODE=
+GOOGLE_MAPS_API=
+```
+5. Install dependency
+   ```sh
+   composer install
+   ```
+5. Generate key
+   ```sh
+   php artisan key:generate
+   ``` 
+5. Generate jwt secret key
+   ```sh
+   php artisan jwt:secret
+   ``` 
+6. Run migrate command (Be sure your db settings are correct)
+   ```sh
+   php artisan migrate
+   ``` 
+7. Run the development serve
+   ```sh
+   php artisan serve
+   ```
+8. Send the get request
+   ```sh
+   localhost:8000
    ```
 
 
 <p align="right">(<a href="#top">back to top</a>)</p>
-
 
 
 

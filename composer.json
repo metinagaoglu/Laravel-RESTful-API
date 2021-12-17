@@ -1,1 +1,7 @@
-{}
+{
+  "scripts": {
+    "post-install-cmd": [
+      "cd src && composer install && php artisan migrate"
+    ]
+  }
+}

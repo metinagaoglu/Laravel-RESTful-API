@@ -31,4 +31,20 @@ class Appointment extends Model
         'available_time_at_the_office',
     ];
 
+    /**
+     * Get the user struct associated with the appointment.
+     */
+    public function User()
+    {
+        return $this->hasOne(User::class,'id','user_id');
+    }
+
+    /**
+     * Get the contact struct associated with the appointment.
+     */
+    public function Contact()
+    {
+        return $this->hasOne(Contact::class,'contact_id','contact_id');
+    }
+
 }

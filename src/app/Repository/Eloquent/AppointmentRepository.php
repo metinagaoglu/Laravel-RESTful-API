@@ -38,6 +38,8 @@ class AppointmentRepository extends BaseRepository implements AppointmentReposit
         if ($date) {
             $appointments=$this->model->where('appointment_date','>',$date);
         }
+        $appointments->with('User');
+        $appointments->with('Contact');
         $appointments = $appointments->paginate($pagelimit);
         return $appointments;
     }

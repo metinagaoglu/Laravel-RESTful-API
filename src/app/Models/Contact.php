@@ -23,4 +23,12 @@ class Contact extends Model
         'name',
         'surname'
     ];
+
+    /**
+     * Get the appointments list struct associated with the Contact.
+     */
+    public function Appointments()
+    {
+        return $this->HasMany(Appointment::class,'contact_id','contact_id');
+    }
 }

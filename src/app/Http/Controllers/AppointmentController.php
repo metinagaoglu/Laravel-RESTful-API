@@ -6,6 +6,7 @@ use App\Http\Requests\AppointmentRequest;
 use App\Repository\Eloquent\AppointmentRepository;
 use App\Repository\Eloquent\ContactRepository;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use MarcinOrlowski\ResponseBuilder\ResponseBuilder as RB;
@@ -67,7 +68,7 @@ class AppointmentController extends Controller
         ."?destinations={$appointment->latitude}%20{$appointment->longitude}"
         ."&origins={$real_estate->latitude}%20{$real_estate->longitude}"
         ."&key={$google_maps_api_token}&mode=driving";
-        $mapsCache = file_get_contents($maps);
+        $mapsCache = Http::get($maps);
 
        $distanceApiResponse = json_decode($mapsCache);
        if(json_last_error() !== 0) {

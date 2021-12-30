@@ -2,9 +2,11 @@
 
 namespace App\Repository\Eloquent;
 
+use App\Http\Resources\AppointmentCollection;
 use App\Models\Appointment;
 use App\Interfaces\AppointmentRepositoryInterface;
 use Illuminate\Support\Collection;
+
 
 class AppointmentRepository extends BaseRepository implements AppointmentRepositoryInterface
 {
@@ -41,7 +43,7 @@ class AppointmentRepository extends BaseRepository implements AppointmentReposit
         $appointments->with('User');
         $appointments->with('Contact');
         $appointments = $appointments->paginate($pagelimit);
-        return $appointments;
+        return new AppointmentCollection($appointments);
     }
 
     public function update(array $attributes,$id) {

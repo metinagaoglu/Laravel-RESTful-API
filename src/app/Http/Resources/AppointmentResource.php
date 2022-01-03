@@ -15,6 +15,7 @@ class AppointmentResource extends JsonResource
     public function toArray($request)
     {
         return [
+            'appointment_id' => $this->appointment_id,
             'appointment_address' => $this->appointment_address,
             'origin_addresses' => $this->origin_addresses,
             'post_code' => $this->post_code,

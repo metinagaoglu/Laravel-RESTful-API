@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\AppointmentRequest;
+use App\Models\Appointment;
 use App\Repository\Eloquent\AppointmentRepository;
 use App\Repository\Eloquent\ContactRepository;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
@@ -40,7 +42,18 @@ class AppointmentController extends Controller
             return RB::error(400,[],$validator->errors(),400);
         }
 
-        $appointments = $this->appointmentRepository->filterAndPaginate($request->get('date'), 10);
+        $page = (int) $request->get('page',1) ;
+        $cache_key = "appointments.{$page}";
+        $cache_ttl = 60*60*24;
+
+        if ($request->has('date')) {
+            $cache_ttl = 60;
+            $cache_key .= $request->get('date');
+        }
+
+        $appointments = Cache::remember($cache_key,$cache_ttl,function () use ($request) {
+             return $this->appointmentRepository->filterAndPaginate($request->get('date'), 5);
+        });
 
         return RB::success($appointments);
     }

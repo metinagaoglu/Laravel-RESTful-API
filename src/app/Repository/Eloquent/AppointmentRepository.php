@@ -47,7 +47,8 @@ class AppointmentRepository extends BaseRepository implements AppointmentReposit
     }
 
     public function update(array $attributes,$id) {
-        return $this->model->where('appointment_id',$id)->update($attributes);
+            $appointment = $this->model->where('appointment_id',$id)->first();
+            $appointment->update($attributes);
     }
 
     public function destroy(int $id): bool

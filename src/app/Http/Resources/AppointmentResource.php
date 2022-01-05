@@ -12,7 +12,7 @@ class AppointmentResource extends JsonResource
      * @param  \Illuminate\Http\Request  $request
      * @return array|\Illuminate\Contracts\Support\Arrayable|\JsonSerializable
      */
-    public function toArray($request)
+    public function toArray($request): array
     {
         return [
             'appointment_id' => $this->appointment_id,
@@ -26,7 +26,9 @@ class AppointmentResource extends JsonResource
             'distance' => $this->distance,
             'duration' => ($this->duration / 60) ,
             'estimated_time_out_of_office' => $this->estimated_time_out_of_office,
-            'available_time_at_the_office' => $this->available_time_at_the_office
+            'available_time_at_the_office' => $this->available_time_at_the_office,
+            'realtor' => UserResource::make($this->user),
+            'contact' => ContactResource::make($this->contact),
         ];
     }
 }

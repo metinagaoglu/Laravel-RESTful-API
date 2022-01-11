@@ -69,8 +69,12 @@ class AppointmentController extends Controller
 
         $contact = $contact = $this->updateOrCreateContact($request);
 
-        $appointment = Postcode::getPostcode($request->get('post_code'));
-        $real_estate = Postcode::getPostcode(getenv('REAL_ESTATE_AGENT_POSTCODE'));
+        try{
+            $appointment = Postcode::getPostcode($request->get('post_code'));
+            $real_estate = Postcode::getPostcode(getenv('REAL_ESTATE_AGENT_POSTCODE'));
+        } catch (\Exception $e) {
+            return RB::error(111,[],'Postcode error, please try again later')->setStatusCode(500);
+        }
 
         /**
          * TODO: Make a service for this

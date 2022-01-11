@@ -29,12 +29,7 @@ class AppointmentRepository extends BaseRepository implements AppointmentReposit
         return $this->model->all();
     }
 
-    /**
-     * @param string|null $date
-     * @param int $pagelimit
-     * @return mixed
-     */
-    public function filterAndPaginate(?string $date,int $pagelimit)
+    public function filterAndPaginate(?string $date,int $pagelimit): AppointmentCollection
     {
         $appointments = $this->model;
         if ($date) {
@@ -46,7 +41,8 @@ class AppointmentRepository extends BaseRepository implements AppointmentReposit
         return new AppointmentCollection($appointments);
     }
 
-    public function update(array $attributes,$id) {
+    public function update(array $attributes,$id): void
+    {
             $appointment = $this->model->where('appointment_id',$id)->first();
             $appointment->update($attributes);
     }

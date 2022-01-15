@@ -3,6 +3,7 @@
 namespace App\Repository\Eloquent;
 
 use App\Http\Resources\AppointmentCollection;
+use App\Http\Resources\AppointmentResource;
 use App\Models\Appointment;
 use App\Interfaces\AppointmentRepositoryInterface;
 use Illuminate\Support\Collection;
@@ -39,6 +40,19 @@ class AppointmentRepository extends BaseRepository implements AppointmentReposit
         $appointments->with('Contact');
         $appointments = $appointments->paginate($pagelimit);
         return new AppointmentCollection($appointments);
+    }
+
+    /**
+     * @param int $id
+     * @return AppointmentResource
+     */
+    public function find(int $id): ?AppointmentResource {
+        $appointment = $this->model->where('appointment_id',$id)->first();
+        if ($appointment === null) {
+            return null;
+        }
+
+        return new AppointmentResource($appointment);
     }
 
     public function update(array $attributes,$id): void

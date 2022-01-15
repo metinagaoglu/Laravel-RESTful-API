@@ -132,11 +132,16 @@ class AppointmentController extends Controller
      * Display the specified resource.
      *
      * @param int $id
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\Response|object|\Symfony\Component\HttpFoundation\Response
      */
     public function show($id)
     {
-        //
+        $appointment = $this->appointmentRepository->find($id);
+        if ($appointment === null) {
+            return RB::error(404,[],'Not found appintment')->setStatusCode(404);
+        }
+
+        return RB::success($appointment)->setStatusCode(200);
     }
 
     /**
